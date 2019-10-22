@@ -123,7 +123,6 @@ COMMANDS = {
 
 # --------------------------------------------
 def DisplayBanner():
-    global VER
     print(BANNER_TITLE)
     print(BANNER_MESSAGE)
 
@@ -194,6 +193,24 @@ def Date12(time):
     now_12 += tod
 
     return now_12
+
+def ConnectArduino():
+    ser = None
+    print('\nSearching for Arduino board on serial port:', SERIAL_COM)
+    try:
+        ser = serial.Serial(SERIAL_COM, BAUD, timeout=TOUT)
+    except:
+        print('\nERROR: Cannot open serial port:', SERIAL_COM)
+
+        if(platform.system() == 'Linux'):
+            print('Make sure you run this as sudo.\n')
+
+        print('EXITING\n')
+        exit()
+
+    print('Connected to Arduino on port', ser.name)
+
+    return ser
 
 # Main menu functions
 def MainMenu(user):
@@ -369,8 +386,11 @@ def InputPassword(msg, pswd, attempts=3):
             at += 1
     
     return False
-        
-# MAIN BEGIN---------------------------------
+
+
+#-----------------------------------------------------------------------------
+# MAIN BEGIN
+#-----------------------------------------------------------------------------
 DisplayBanner()
 
 ADMIN = firb.get_admin()
@@ -390,20 +410,7 @@ ReadConfig('config.txt')
 
 print('-'*30)
 
-print('\nSearching for Arduino board on serial port:', SERIAL_COM)
-
-try:
-    ser = serial.Serial(SERIAL_COM, BAUD, timeout=TOUT)
-except:
-    print('\nERROR: Cannot open serial port:', SERIAL_COM)
-
-    if(platform.system() == 'Linux'):
-        print('Make sure you run this as sudo.\n')
-
-    print('EXITING\n')
-    exit()
-
-print('Connected to Arduino on port', ser.name)
+ser = ConnectArduino()
 
 line = ''
 uid = ''
@@ -440,6 +447,7 @@ while(True):
             if(uid == BLUE_CARD_UID):
                 ser.close()
                 print('-'*30)
+
                 if(len(USER) != 0):
                     # Open main user menu
                     MainMenu(USER)

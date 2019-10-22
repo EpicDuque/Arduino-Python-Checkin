@@ -4,9 +4,9 @@ from firebase_admin import firestore
 from datetime import datetime
 
 # Create a callback on_snapshot function to capture changes
-def on_snapshot(doc_snapshot, changes, read_time):
-    for doc in doc_snapshot:
-        continue
+# def on_snapshot(doc_snapshot, changes, read_time):
+#     for doc in doc_snapshot:
+#         continue
 
 def add_user(data):
     USERS_REF.add(data)
