@@ -1,25 +1,41 @@
+# ----------------------------------------------------------------------
+# User Checkin/Checkout System, using Arduino and Python
+# 
+# Pedro Duquesne
+# 10/22/2019
+# ----------------------------------------------------------------------
 import serial, re, platform
 import firb
 from datetime import datetime
 import hashlib
 import getpass
 import sys
+#-----------------------------------------------------------------------
+# GLOBAL CONFIG, PLEASE EDIT THIS |
+#-----------------------------------------------------------------------
+VER = 'beta 1.0.0'
+BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
+BANNER_MESSAGE = 'Pedro Duquesne @ Universidad Interamericana de Bayamón - School of Engineering\n'
+#-----------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------
+# 
+#-----------------------------------------------------------------------
 
 # Global Variables
-ver = 'beta 1.0.0'
-serial_com = ''
-baud = ''
-tout = 0
-user = {}
-userpw = False
-ad = {}
-#--------------------
-# Constant Variables
+SERIAL_COM = ''
+BAUD = ''
+TOUT = 0
+USER = {}
+USER_PW = False
+ADMIN = {}
 BLUE_CARD_UID = ''
-#--------------------
 
-# Admin Related -----------------------------
-def list_users(args):
+#----------------------------------------------------------------------
+# Admin Related 
+#----------------------------------------------------------------------
+def ListUsers(args):
     print('\nListing all Users...\n')
     users = firb.get_all_users()
 
@@ -29,7 +45,7 @@ def list_users(args):
     
     print()
 
-def list_checks(args):
+def ListChecks(args):
     if(len(args) > 2 and args[1] == '-uid'):
         uids = args[2].split(',')
 
@@ -54,71 +70,70 @@ def list_checks(args):
             # List all Checks for one user
             for doc in docs:
                 d = doc.to_dict()
-                print(date_12(d['time']), d['in'])
+                print(Date12(d['time']), d['in'])
 
     else:
         print('\nUSAGE: checks -uid [uid,uid,...] -q [num]')
 
     print('\nDONE')
 
-def display_help(args):
-    global commands
+def DisplayHelp(args):
+    global COMMANDS
     print('\nCommands Available:\n')
 
-    for c in commands:
+    for c in COMMANDS:
         print(c)
     
     print()
 
-def admin_menu():
+def AdminMenu():
     print('ADMIN Console. Type "help" for a list of commands.')
     print('-'*60)
-    get_command('Command : ')
-    
+    GetCommand('Command : ')   
 
-def get_command(msg):
+def GetCommand(msg):
     valid = False
     while(not valid):
         comm = input(msg)
         args = comm.split(' ')
         comm = args[0]
         
-        if(comm in commands):
-            commands[comm](args)
+        if(comm in COMMANDS):
+            COMMANDS[comm](args)
 
-def exit_admin(args):
+def ExitAdmin(args):
     print('\nExiting Admin console. GOODBYE')
     exit()
 
-def delete_user(args):
+def DeleteUser(args):
     firb.delete_user(args[1])
 
-def wipe_data(args):
+def WipeData(args):
     pass
 
-commands = {
-    'users' : list_users,
-    'checks' : list_checks,
-    'help' : display_help,
-    'quit' : exit_admin,
-    'exit' : exit_admin,
-    'delete' : delete_user,
-    'wipe' : wipe_data,
+COMMANDS = {
+    'users' : ListUsers,
+    'checks' : ListChecks,
+    'help' : DisplayHelp,
+    'quit' : ExitAdmin,
+    'exit' : ExitAdmin,
+    'delete' : DeleteUser,
+    'wipe' : WipeData,
 }
 
 # --------------------------------------------
-def display_banner():
-    global ver
-    print('CORE LAB Check In Service - Ver:', ver)
-    print('Pedro Duquesne @ Universidad Interamericana de Bayamón - School of Engineering\n')
+def DisplayBanner():
+    global VER
+    print(BANNER_TITLE)
+    print(BANNER_MESSAGE)
 
     print('Initializing...')
     print('Operating System: ' + platform.system())
 
-def read_config(file):
-    global serial_com
-    global baud
-    global tout
+def ReadConfig(file):
+    global SERIAL_COM
+    global BAUD
+    global TOUT
     global BLUE_CARD_UID
 
     # Read all contents from config.txt ------------
@@ -138,20 +153,20 @@ def read_config(file):
     # Read COM Port
     pat = 'port=(.+)'
     match = re.search(pat, contents)
-    serial_com = match.group(1)
-    print('SERIAL PORT:', serial_com)
+    SERIAL_COM = match.group(1)
+    print('SERIAL PORT:', SERIAL_COM)
 
     # Read BAUD RATE
     pat = 'baud=(\d+)'
     match = re.search(pat, contents)
-    baud = int(match.group(1))
-    print('BAUD RATE:', baud)
+    BAUD = int(match.group(1))
+    print('BAUD RATE:', BAUD)
 
     # Read Timeout
     pat = 'timeout=(\d+)'
     match = re.search(pat, contents)
-    tout = int(match.group(1))
-    print('Arduino conenction Timeout:', tout)
+    TOUT = int(match.group(1))
+    print('Arduino conenction Timeout:', TOUT)
 
     # Read Blue Keycard UID
     pat = 'bluecard=(.+)'
@@ -162,7 +177,7 @@ def read_config(file):
     print ('\nDONE')
 
 # Get time now in 12 hour format with 'PM/AM' Suffix
-def date_12(time):
+def Date12(time):
 
     # Get Date and Time and adjust for 12 hour format
     now = time.strftime("%m/%d/%Y %H:%M:%S")
@@ -181,17 +196,21 @@ def date_12(time):
     return now_12
 
 # Main menu functions
-def mainmenu(user):
+def MainMenu(user):
+    print('-'*60)
+    print('NOTE: This feature is not fully implemented yet.\n')
+    print('-'*60)
+
     print('\nBlue Keycard detected, entering main menu for ({} {})'.format(user['name'], user['lastname']))
     print('UID:', user['uid'])
     print()
     
-    if(not password_input('Please Enter user Password: ', user['pass'])):
+    if(not InputPassword('Please Enter user Password: ', user['pass'])):
         print('ERROR: Failed to provide user password. Returning.')
         return
 
     menu_switch = {
-        1 : menu_findchecks,
+        1 : Menu_FindChecks,
     }
 
     while(True):
@@ -203,17 +222,17 @@ def mainmenu(user):
 
         print()
 
-        sel = validated_input_int(msg='Menu #: ', valid_range=range(0,2))
+        sel = ValidateInput_Int(msg='Menu #: ', valid_range=range(0,2))
         if(sel == 0):
             break
         
         menu_switch[sel]()   
             
-def menu_findchecks():
+def Menu_FindChecks():
     print()
-    num = validated_input_int(msg='How many Checks to review? (1 - 20): ', valid_range=range(1,21))
+    num = ValidateInput_Int(msg='How many Checks to review? (1 - 20): ', valid_range=range(1,21))
 
-    docs = firb.find_checks(user['uid'], num)
+    docs = firb.find_checks(USER['uid'], num)
     print('\nDisplaying last {} Checks:'.format(num))
     print()
     for doc in docs:
@@ -223,9 +242,9 @@ def menu_findchecks():
         else:
             c = 'CHECK OUT'
         
-        print(date_12(d['time']), c)
+        print(Date12(d['time']), c)
 
-def validated_input_int(msg = '', valid_range = [0]):
+def ValidateInput_Int(msg = '', valid_range = [0]):
     done = False
     while(not done):
         try:
@@ -241,8 +260,10 @@ def validated_input_int(msg = '', valid_range = [0]):
     
     return num
     
-#End Main menu functions -----------------
-def add_db_user(uid):
+# End Main menu functions -----------------
+
+# DB Functions
+def AddUnknownUser(uid):
     print('UNKNOWN UID:', uid)
     print('Add new user now?')
     select = input('y/n : ')
@@ -283,8 +304,8 @@ def add_db_user(uid):
         firb.add_user(data)
         print('Done\n')
 
-def check_user(user):
-    print('WELCOME!\n')
+def CheckUser(user):
+    print('USER PROCESS OK\n')
     print('User:', user['name'], user['lastname'])
     print('Student Num:', user['snum'])
 
@@ -292,13 +313,13 @@ def check_user(user):
     date = datetime.now()
 
     # Get time now in 12 hour format with 'PM/AM' Suffix
-    now_12 = date_12(date)
+    now_12 = Date12(date)
     print('Time:', now_12)
     print()
     firb.add_check(user['uid'], date)
 
-def setup_admin():
-    global ad
+def AdminSetup():
+    global ADMIN
 
     print('ALERT: No admin password detected. Please setup an admin password now.\n')
     while(True):
@@ -325,13 +346,13 @@ def setup_admin():
         try:
             firb.set_admin(data)
             print('Admin password successfully added!\n')
-            ad = data
+            ADMIN = data
             break
         except:
             print('ERROR: There was an error adding the admin data to the database. QUITTING!')
             exit()
 
-def password_input(msg, pswd, attempts=3):
+def InputPassword(msg, pswd, attempts=3):
     at = 0
     while(at < attempts):
         password = getpass.getpass(prompt=msg)
@@ -350,31 +371,31 @@ def password_input(msg, pswd, attempts=3):
     return False
         
 # MAIN BEGIN---------------------------------
-display_banner()
+DisplayBanner()
 
-ad = firb.get_admin()
+ADMIN = firb.get_admin()
 
-if(ad == None or ad['pass'] == None):
-    setup_admin()
+if(ADMIN == None or ADMIN['pass'] == None):
+    AdminSetup()
 
 if(len(sys.argv) > 1 and sys.argv[1] == 'admin'):
     print()
-    if(password_input('Please enter Admin Password: ', ad['pass'])):
-        admin_menu()
+    if(InputPassword('Please enter Admin Password: ', ADMIN['pass'])):
+        AdminMenu()
     else:
         print('ERROR: Cannot enter Admin menu. Incorrect Password. QUITTING!')
         exit()
 
-read_config('config.txt')
+ReadConfig('config.txt')
 
 print('-'*30)
 
-print('\nSearching for Arduino board on serial port:', serial_com)
+print('\nSearching for Arduino board on serial port:', SERIAL_COM)
 
 try:
-    ser = serial.Serial(serial_com, baud, timeout=tout)
+    ser = serial.Serial(SERIAL_COM, BAUD, timeout=TOUT)
 except:
-    print('\nERROR: Cannot open serial port:', serial_com)
+    print('\nERROR: Cannot open serial port:', SERIAL_COM)
 
     if(platform.system() == 'Linux'):
         print('Make sure you run this as sudo.\n')
@@ -419,9 +440,9 @@ while(True):
             if(uid == BLUE_CARD_UID):
                 ser.close()
                 print('-'*30)
-                if(len(user) != 0):
+                if(len(USER) != 0):
                     # Open main user menu
-                    mainmenu(user)
+                    MainMenu(USER)
                     break
                 else:
                     print('ERROR: No user has been registered since startup. Cannot enter Menu.\n')
@@ -430,15 +451,15 @@ while(True):
             print('\nFetching user on Database...')
 
             try:
-                user = firb.find_user_by_uid(uid)
+                USER = firb.find_user_by_uid(uid)
             except:
                 print('\nERROR: There was a problem connecting to the Database.')
                 break
 
-            if(len(user) != 0):
+            if(len(USER) != 0):
                 print('-'*30)
                 print('.'*30)
-                check_user(user)
+                CheckUser(USER)
                 print('.'*30)
                 print('-'*30)
 
@@ -446,7 +467,7 @@ while(True):
 
             else:
                 ser.close()
-                add_db_user(uid)
+                AddUnknownUser(uid)
 
                 break
 
