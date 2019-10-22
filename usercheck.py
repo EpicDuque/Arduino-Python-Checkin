@@ -480,3 +480,5 @@ while(True):
                 break
 
 ser.close()
+
+#EOF
