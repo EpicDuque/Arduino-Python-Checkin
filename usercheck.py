@@ -6,7 +6,7 @@ import getpass
 import sys
 
 # Global Variables
-ver = '1.0.0'
+ver = 'b1.0.0'
 serial_com = ''
 baud = ''
 tout = 0
@@ -60,7 +60,6 @@ def list_checks(args):
         print('\nUSAGE: checks -uid [uid,uid,...] -q [num]')
 
     print('\nDONE')
-
 
 def display_help(args):
     global commands
@@ -376,6 +375,10 @@ try:
     ser = serial.Serial(serial_com, baud, timeout=tout)
 except:
     print('\nERROR: Cannot open serial port:', serial_com)
+
+    if(platform.system() == 'Linux'):
+        print('Make sure you run this as sudo.\n')
+        
     print('EXITING\n')
     exit()
 
