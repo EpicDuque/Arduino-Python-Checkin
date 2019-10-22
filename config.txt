@@ -1,0 +1,4 @@
+port=COM5
+baud=9600
+timeout=10
+bluecard=BB42703B
