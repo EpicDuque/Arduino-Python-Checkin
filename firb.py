@@ -83,7 +83,7 @@ def get_admin():
 def set_admin(data):
     ADMIN_REF.document('creds').set(data)
 
-cred = credentials.Certificate("core-lab-reg-firebase-adminsdk-7m4cm-07396b6d94.json")
+cred = credentials.Certificate('adminsdk.json')
 firebase_admin.initialize_app(cred)
 
 # access the database

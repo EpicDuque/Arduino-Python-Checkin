@@ -6,7 +6,7 @@ import getpass
 import sys
 
 # Global Variables
-ver = 'b1.0.0'
+ver = 'beta 1.0.0'
 serial_com = ''
 baud = ''
 tout = 0
@@ -378,7 +378,7 @@ except:
 
     if(platform.system() == 'Linux'):
         print('Make sure you run this as sudo.\n')
-        
+
     print('EXITING\n')
     exit()
 
