@@ -38,6 +38,7 @@
 #define SS_PIN 10
 #define RST_PIN 9
 #define BUZZ_PIN 7
+#define RELAY_PIN 8
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 
@@ -52,6 +53,7 @@ void setup() {
   rfid.PCD_Init(); // Init MFRC522
 
   pinMode(BUZZ_PIN, OUTPUT); // Buzzer Pin
+  pinMode(RELAY_PIN, OUTPUT); // Buzzer Pin
 
   for (byte i = 0; i < 6; i++) {
     key.keyByte[i] = 0xFF;
@@ -81,7 +83,6 @@ void loop() {
   }
 
   // Process card read
-  
   // This is a BUZZER connected to the arduino and buzzes it for 80 ms.
   digitalWrite(BUZZ_PIN, HIGH);
   delay(80);

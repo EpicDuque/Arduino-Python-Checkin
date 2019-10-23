@@ -30,6 +30,11 @@ BLUE_CARD_UID = ''
 #----------------------------------------------------------------------
 # Admin Related 
 #----------------------------------------------------------------------
+def NewUser(args):
+    print('Present new user Card...\n')
+    uid = CaptureCard(serclose=True)
+    AddNewUser(uid)
+
 def ListUsers(args):
     print('\nListing all Users...\n')
     users = firb.get_all_users()
@@ -81,7 +86,7 @@ def ListChecks(args):
                 print(Date12(d['time']), t)
 
     else:
-        print('DESCRIPTION: Shows a list of Checks\n')
+        print('DESCRIPTION: Shows a list of Checks')
         print('\nUSAGE: checks -[param] [args] -q [num]')
         print('\nExample: checks -name Bob')
         print('Example: checks -name Bob,Alice,Matt -q 4')
@@ -137,6 +142,7 @@ def WipeData(args):
     pass
 
 COMMANDS = {
+    'new'       : NewUser,
     'users'     : ListUsers,
     'checks'    : ListChecks,
     'help'      : DisplayHelp,
@@ -247,9 +253,9 @@ def MainMenu(user):
     print('UID:', user['uid'])
     print()
     
-    if(not InputPassword('Please Enter user Password: ', user['pass'])):
-        print('ERROR: Failed to provide user password. Returning.')
-        return
+    # if(not InputPassword('Please Enter user Password: ', user['pass'])):
+    #     print('ERROR: Failed to provide user password. Returning.')
+    #     return
 
     menu_switch = {
         1 : Menu_FindChecks,
@@ -316,46 +322,47 @@ def FetchUser(uid):
     
     return user
 
-def AddUnknownUser(uid):
-    print('UNKNOWN UID:', uid)
-    print('Add new user now?')
-    select = input('y/n : ')
+def AddNewUser(uid):
+    user = firb.find_user('uid', uid)
 
-    if(select == 'y'):
-        name = input('\nFirst Name : ')
-        last = input('Last Name : ')
-        student_num = input('Student Num #: ')
-        
-        while(True):
-            password = getpass.getpass(prompt='Personal Password (Min Length=6): ')
-            if(len(password) < 6):
-                print('\nPassword does not satisfy length requirement.\n')
-                continue
+    if(len(user) > 0):
+        print('User already exists in the Database.\n')
+        return
 
-            password_confirm = getpass.getpass(prompt='Confirm Password: ')
+    name = input('\nFirst Name : ')
+    last = input('Last Name : ')
+    student_num = input('Student Num #: ')
+    
+    while(True):
+        password = getpass.getpass(prompt='Personal Password (Min Length=6): ')
+        if(len(password) < 6):
+            print('\nPassword does not satisfy length requirement.\n')
+            continue
 
-            if(password == password_confirm):
-                break
-            else:
-                print('\nPasswords do not match!\n')
+        password_confirm = getpass.getpass(prompt='Confirm Password: ')
 
-        m = hashlib.sha256()
-        m.update(password.encode('utf-8'))
-        password = m.hexdigest()
+        if(password == password_confirm):
+            break
+        else:
+            print('\nPasswords do not match!\n')
 
-        print('\nAdding new user to Database...')
+    m = hashlib.sha256()
+    m.update(password.encode('utf-8'))
+    password = m.hexdigest()
 
-        # Data envelope schema
-        data = {
-            'name' : name,
-            'lastname' : last,
-            'uid' : uid,
-            'snum' : student_num,
-            'pass' : password
-        }
+    print('\nAdding new user to Database...')
 
-        firb.add_user(data)
-        print('Done\n')
+    # Data envelope schema
+    data = {
+        'name' : name,
+        'lastname' : last,
+        'uid' : uid,
+        'snum' : student_num,
+        'pass' : password
+    }
+
+    firb.add_user(data)
+    print('Done\n')
 
 def CheckUser(user):
     print('USER PROCESS OK\n')
@@ -423,7 +430,10 @@ def InputPassword(msg, pswd, attempts=3):
     
     return False
 
-def CaptureCard():
+def CaptureCard(serclose = False):
+    global ser
+    uid = ''
+
     # Inner Loop
     while(True):
         if(ser.isOpen() == False):
@@ -446,13 +456,23 @@ def CaptureCard():
             uid = match.group(1).replace(' ', '')
             #print('UID: ' + uid)
             print('Read Successful')
-
-            return uid
+            break
+        
+    if(serclose):
+        ser.close()
+    
+    return uid
 
 #-----------------------------------------------------------------------------
 # MAIN BEGIN
 #-----------------------------------------------------------------------------
 DisplayBanner()
+
+ReadConfig('config.txt')
+
+print('-'*30)
+
+ser = ConnectArduino()
 
 ADMIN = firb.get_admin()
 
@@ -467,11 +487,6 @@ if(len(sys.argv) > 1 and sys.argv[1] == 'admin'):
         print('ERROR: Cannot enter Admin menu. Incorrect Password. QUITTING!')
         exit()
 
-ReadConfig('config.txt')
-
-print('-'*30)
-
-ser = ConnectArduino()
 
 line = ''
 uid = ''
@@ -488,8 +503,8 @@ while(True):
     if(uid == BLUE_CARD_UID):
         print('\nPlease present your card to access user menu...\n')
         uid = CaptureCard()
-
         ser.close()
+
         print('-'*60)
 
         USER = FetchUser(uid)
@@ -513,8 +528,8 @@ while(True):
         continue
 
     else:
-        ser.close()
-        AddUnknownUser(uid)
+        # AddUnknownUser(uid)
+        print('\nERROR: Unknown UID Detected.\n')
         continue
 
 ser.close()
