@@ -32,7 +32,7 @@ BLUE_CARD_UID = ''
 #----------------------------------------------------------------------
 def NewUser(args):
     print('Present new user Card...\n')
-    uid = CaptureCard(serclose=True)
+    uid = CaptureCard()
     AddNewUser(uid)
 
 def ListUsers(args):
@@ -503,7 +503,7 @@ while(True):
     if(uid == BLUE_CARD_UID):
         print('\nPlease present your card to access user menu...\n')
         uid = CaptureCard()
-        ser.close()
+        # ser.close()
 
         print('-'*60)
 
