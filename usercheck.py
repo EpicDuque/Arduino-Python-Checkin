@@ -18,11 +18,6 @@ BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
 BANNER_MESSAGE = 'Pedro Duquesne @ Universidad Interamericana de Bayamón - School of Engineering\n'
 #-----------------------------------------------------------------------
 
-
-#-----------------------------------------------------------------------
-# 
-#-----------------------------------------------------------------------
-
 # Global Variables
 SERIAL_COM = ''
 BAUD = ''
@@ -59,7 +54,7 @@ def ListChecks(args):
             qty = 6
         
         for uid in uids:
-            u = firb.find_user_by_uid(uid)
+            u = firb.find_user('uid', uid)
             print()
             print('-'*60)
             print('Listing checks for:', u['name'], u['lastname'])
@@ -112,13 +107,13 @@ def WipeData(args):
     pass
 
 COMMANDS = {
-    'users' : ListUsers,
-    'checks' : ListChecks,
-    'help' : DisplayHelp,
-    'quit' : ExitAdmin,
-    'exit' : ExitAdmin,
-    'delete' : DeleteUser,
-    'wipe' : WipeData,
+    'users'     : ListUsers,
+    'checks'    : ListChecks,
+    'help'      : DisplayHelp,
+    'quit'      : ExitAdmin,
+    'exit'      : ExitAdmin,
+    'delete'    : DeleteUser,
+    'wipe'      : WipeData,
 }
 
 # --------------------------------------------
@@ -459,7 +454,7 @@ while(True):
             print('\nFetching user on Database...')
 
             try:
-                USER = firb.find_user_by_uid(uid)
+                USER = firb.find_user('uid', uid)
             except:
                 print('\nERROR: There was a problem connecting to the Database.')
                 break

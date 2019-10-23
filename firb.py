@@ -55,16 +55,16 @@ def find_user(field, arg):
     
     return {}
 
-def find_user_by_uid(uid):
-    #docs = USERS_REF.stream()
-    docs = USERS_REF.where('uid', '==', uid).stream()
+# def find_user_by_uid(uid):
+#     #docs = USERS_REF.stream()
+#     docs = USERS_REF.where('uid', '==', uid).stream()
 
-    for doc in docs:
-        d = doc.to_dict()
-        if(d['uid'] == uid):
-            return d
+#     for doc in docs:
+#         d = doc.to_dict()
+#         if(d['uid'] == uid):
+#             return d
     
-    return {}
+#     return {}
 
 def get_all_users():
     return USERS_REF.stream()

@@ -139,11 +139,10 @@ Linux:
 sudo python3 usercheck.py
 ```
 
-Windows:
+Windows (Power Shell):
 ```
-./usercheck.py
+.\usercheck.py
 ```
-
 
 ## Authors
 
