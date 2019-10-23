@@ -11,8 +11,8 @@ from datetime import datetime
 def add_user(data):
     USERS_REF.add(data)
 
-def delete_user(arg):
-    user = find_user('snum', arg)
+def delete_user(field, arg):
+    user = find_user(field, arg)
 
     if('name' in user):
         print('Result:', user['name'], user['lastname'], user['did'])

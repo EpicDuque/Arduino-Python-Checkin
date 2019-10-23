@@ -41,8 +41,9 @@ def ListUsers(args):
     print()
 
 def ListChecks(args):
-    if(len(args) > 2 and args[1] == '-uid'):
-        uids = args[2].split(',')
+    if(len(args) > 2):
+        users = args[2].split(',')
+        field = args[1][1:]
 
         if(args[3] == '-q'):
             try:
@@ -51,21 +52,33 @@ def ListChecks(args):
                 print('\nERROR: Invalid argument for -q (Expected a positive Integer).\n')
                 return
         else:
+            print('No argument "-q" specified, using default -q 6')
             qty = 6
         
-        for uid in uids:
-            u = firb.find_user('uid', uid)
+        for u in users:
+            usr = firb.find_user(field, u)
+            if(usr == {}):
+                print('User Not Found\n')
+                return
+
             print()
             print('-'*60)
-            print('Listing checks for:', u['name'], u['lastname'])
+            print('Listing checks for:', usr['name'], usr['lastname'])
             print('-'*60)
 
-            docs = firb.find_checks(uid, qty)
+            docs = firb.find_checks(usr['uid'], qty)
 
             # List all Checks for one user
             for doc in docs:
                 d = doc.to_dict()
-                print(Date12(d['time']), d['in'])
+
+                t = ''
+                if(d['in']):
+                    t = 'IN'
+                else:
+                    t = 'OUT'
+
+                print(Date12(d['time']), t)
 
     else:
         print('\nUSAGE: checks -uid [uid,uid,...] -q [num]')
@@ -101,7 +114,12 @@ def ExitAdmin(args):
     exit()
 
 def DeleteUser(args):
-    firb.delete_user(args[1])
+    if(len(args) > 2):
+        users = args[2].split(',')
+        field = args[1][1:]
+
+        for u in users:
+            firb.delete_user(field, u)
 
 def WipeData(args):
     pass
@@ -424,7 +442,7 @@ while(True):
 
         # The readline command reads Serial data as a sequence of bytes rather than ascii characters.
         # We need to convert this for convenience.
-        msg = str(line,'ascii') 
+        msg = str(line,'ascii')
 
         # If there is no message in the Serial, restart the loop.
         if(msg == ''):
@@ -465,13 +483,11 @@ while(True):
                 CheckUser(USER)
                 print('.'*30)
                 print('-'*30)
-
                 break
 
             else:
                 ser.close()
                 AddUnknownUser(uid)
-
                 break
 
 ser.close()
