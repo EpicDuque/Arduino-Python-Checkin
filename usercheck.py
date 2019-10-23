@@ -120,6 +120,13 @@ def DeleteUser(args):
 
         for u in users:
             firb.delete_user(field, u)
+    else:
+        print('DESCRIPTION: Deletes users from the database.\n')
+        print('USAGE: delete -[param] [args]\n')
+        print('\nExample: delete -name Bob')
+        print('Example: delete -name Bob,Alice,Matt')
+        print('Example: delete -uid FA4BB4FC')
+        print('Example: delete -uid 1234ABCD,5678BFDC')
 
 def WipeData(args):
     pass
