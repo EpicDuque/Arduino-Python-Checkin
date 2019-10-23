@@ -81,7 +81,12 @@ def ListChecks(args):
                 print(Date12(d['time']), t)
 
     else:
-        print('\nUSAGE: checks -uid [uid,uid,...] -q [num]')
+        print('DESCRIPTION: Shows a list of Checks\n')
+        print('\nUSAGE: checks -[param] [args] -q [num]')
+        print('\nExample: checks -name Bob')
+        print('Example: checks -name Bob,Alice,Matt -q 4')
+        print('Example: checks -uid FA4BB4FC -q 4')
+        print('Example: checks -uid 1234ABCD,5678BFDC -q 4')
 
     print('\nDONE')
 
