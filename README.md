@@ -144,19 +144,28 @@ Windows (Power Shell):
 .\usercheck.py
 ```
 
+### Admin Console
+From the Console:
+
+Linux:
+```
+sudo python3 usercheck.py admin
+```
+
+Windows (Power Shell):
+```
+.\usercheck.py admin
+```
+
+This will launch the admin console. You will need to make an admin password if running for the first time.
+
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Pedro Duquesne** - *Python Code*
+* **Miguel Balboa** - *RFID Example Arduino Codes: https://github.com/miguelbalboa*
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* CoRe Lab. University of Puerto Rico @ Bayamón. For being AWESOME people.
 
