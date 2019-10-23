@@ -305,6 +305,17 @@ def ValidateInput_Int(msg = '', valid_range = [0]):
 # End Main menu functions -----------------
 
 # DB Functions
+def FetchUser(uid):
+    user = {}
+    print('\nFetching user on Database...')
+
+    try:
+        user = firb.find_user('uid', uid)
+    except:
+        print('\nERROR: There was a problem connecting to the Database.')
+    
+    return user
+
 def AddUnknownUser(uid):
     print('UNKNOWN UID:', uid)
     print('Add new user now?')
@@ -412,6 +423,31 @@ def InputPassword(msg, pswd, attempts=3):
     
     return False
 
+def CaptureCard():
+    # Inner Loop
+    while(True):
+        if(ser.isOpen() == False):
+            ser.open()
+
+        line = ser.readline()
+
+        # The readline command reads Serial data as a sequence of bytes rather than ascii characters.
+        # We need to convert this for convenience.
+        msg = str(line,'ascii')
+
+        # If there is no message in the Serial, restart the loop.
+        if(msg == ''):
+            continue
+
+        pat = 'HEX: (.. .. .. ..)' # Pattern to identify the line containing the card's UID in HEX
+        match = re.search(pat, msg)
+
+        if match:
+            uid = match.group(1).replace(' ', '')
+            #print('UID: ' + uid)
+            print('Read Successful')
+
+            return uid
 
 #-----------------------------------------------------------------------------
 # MAIN BEGIN
@@ -445,62 +481,41 @@ print()
 while(True):
     print('\nPlease present your card...\n')
 
-    # Inner Loop
-    while(True):
-        if(ser.isOpen() == False):
-            ser.open()
+    uid = CaptureCard()
 
-        line = ser.readline()
+    # Determine if Blue Keycard
+    # This will later be done with a push button
+    if(uid == BLUE_CARD_UID):
+        print('\nPlease present your card to access user menu...\n')
+        uid = CaptureCard()
 
-        # The readline command reads Serial data as a sequence of bytes rather than ascii characters.
-        # We need to convert this for convenience.
-        msg = str(line,'ascii')
+        ser.close()
+        print('-'*60)
 
-        # If there is no message in the Serial, restart the loop.
-        if(msg == ''):
+        USER = FetchUser(uid)
+
+        if(len(USER) != 0):
+            # Open main user menu
+            MainMenu(USER)
+            continue
+        else:
+            print('ERROR: User not found. Cannot enter Menu.\n')
             continue
 
-        pat = 'HEX: (.. .. .. ..)' # Pattern to identify the line containing the card's UID in HEX
-        match = re.search(pat, msg)
+    USER = FetchUser(uid)
 
-        if match:
-            uid = match.group(1).replace(' ', '')
-            #print('UID: ' + uid)
-            print('Read Successful')
+    if(len(USER) != 0):
+        print('-'*60)
+        print('.'*60)
+        CheckUser(USER)
+        print('.'*60)
+        print('-'*60)
+        continue
 
-            # Determine if Blue Keycard
-            if(uid == BLUE_CARD_UID):
-                ser.close()
-                print('-'*30)
-
-                if(len(USER) != 0):
-                    # Open main user menu
-                    MainMenu(USER)
-                    break
-                else:
-                    print('ERROR: No user has been registered since startup. Cannot enter Menu.\n')
-                    break
-
-            print('\nFetching user on Database...')
-
-            try:
-                USER = firb.find_user('uid', uid)
-            except:
-                print('\nERROR: There was a problem connecting to the Database.')
-                break
-
-            if(len(USER) != 0):
-                print('-'*30)
-                print('.'*30)
-                CheckUser(USER)
-                print('.'*30)
-                print('-'*30)
-                break
-
-            else:
-                ser.close()
-                AddUnknownUser(uid)
-                break
+    else:
+        ser.close()
+        AddUnknownUser(uid)
+        continue
 
 ser.close()
 
