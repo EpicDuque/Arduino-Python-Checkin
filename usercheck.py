@@ -4,6 +4,18 @@
 # Pedro Duquesne
 # 10/22/2019
 # ----------------------------------------------------------------------
+# PLEASE remember to write something to the Serial after a CaptureCard command.
+# Or else the Arduino will get stuck in an infinite loop.
+# ----------------------------------------------------------------------
+# TODO:
+# * Arduino waits for Serial information in an infinite loop after reading a card.
+#   This is intended at first but kind of annoying to have to write something
+#   to the Serial after every single CaptureCard command. Need to change this.
+#
+# * Implement the Sheets.py code so that it works with this system.
+# * Make the code Prettier.
+# ----------------------------------------------------------------------
+
 import serial, re, platform
 import firb
 from datetime import datetime
@@ -431,6 +443,8 @@ def InputPassword(msg, pswd, attempts=3):
     
     return False
 
+# PLEASE remember to write something to the Serial after a CaptureCard command.
+# Or else the Arduino will get stuck in an infinite loop.
 def CaptureCard(serclose = False):
 
     global ser
@@ -499,12 +513,13 @@ while(True):
     print('\nPlease present your card...\n')
 
     uid = CaptureCard()
-
+    
     # Determine if Blue Keycard
     # This will later be done with a push button
     if(uid == BLUE_CARD_UID):
         print('\nPlease present your card to access user menu...\n')
         uid = CaptureCard()
+        ser.write(b'OK')
         # ser.close()
 
         print('-'*60)
