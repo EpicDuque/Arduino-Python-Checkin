@@ -7,9 +7,7 @@
 import serial, re, platform
 import firb
 from datetime import datetime
-import hashlib
-import getpass
-import sys
+import hashlib, getpass, sys, time
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE EDIT THIS |
 #-----------------------------------------------------------------------
@@ -310,7 +308,6 @@ def ValidateInput_Int(msg = '', valid_range = [0]):
     
 # End Main menu functions -----------------
 
-# DB Functions
 def FetchUser(uid):
     user = {}
     print('\nFetching user on Database...')
@@ -431,6 +428,7 @@ def InputPassword(msg, pswd, attempts=3):
     return False
 
 def CaptureCard(serclose = False):
+
     global ser
     uid = ''
 
@@ -525,6 +523,10 @@ while(True):
         CheckUser(USER)
         print('.'*60)
         print('-'*60)
+
+        # Send the Open Door signal
+        ser.write(b'OPEN')
+        time.sleep(5)
         continue
 
     else:
