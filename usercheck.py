@@ -29,8 +29,12 @@ BLUE_CARD_UID = ''
 # Admin Related 
 #----------------------------------------------------------------------
 def NewUser(args):
+    global ser
+    
     print('Present new user Card...\n')
     uid = CaptureCard()
+    ser.write(b'OK')
+
     AddNewUser(uid)
 
 def ListUsers(args):
@@ -532,6 +536,11 @@ while(True):
     else:
         # AddUnknownUser(uid)
         print('\nERROR: Unknown UID Detected.\n')
+
+        # Send an "Error" signal. SOMETHING needs to be sent to the Arduino.
+        # Becasue the Arduino at this point is expecting data to read in the Serial.
+        # If nothing is sent, the Arduino will get stucked in an infinite Loop.
+        ser.write(b'E')
         continue
 
 ser.close()
