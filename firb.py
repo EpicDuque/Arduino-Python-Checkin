@@ -1,3 +1,7 @@
+# Firebase Interface with Python
+# Author: Pedro Duquesne
+# 10/24/2019
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
