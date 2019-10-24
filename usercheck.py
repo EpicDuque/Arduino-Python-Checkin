@@ -13,7 +13,7 @@ import hashlib, getpass, sys, time
 #-----------------------------------------------------------------------
 VER = 'beta 1.0.0'
 BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
-BANNER_MESSAGE = 'Pedro Duquesne @ Universidad Interamericana de Bayamón - School of Engineering\n'
+BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
 #-----------------------------------------------------------------------
 
 # Global Variables

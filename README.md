@@ -1,4 +1,4 @@
-﻿# Arduino-Python-Checkin
+﻿# CoRe Lab Check-In Service
   
 This project implements the RFIO-5222 and some Python code to read the UID of Card Tags. This data is sent into a Firebase database to keep track of the time the card was presented. It keeps record of times the user Checked In or Out of the system.
 
