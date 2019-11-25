@@ -243,17 +243,17 @@ def ConnectArduino():
     ser = None
     print('\nSearching for Arduino board on serial port:', SERIAL_COM)
     try:
-        ser = serial.Serial(SERIAL_COM, BAUD, timeout=TOUT)
+        ser = serial.Serial(SERIAL_COM, BAUD)
     except:
         print('\nERROR: Cannot open serial port:', SERIAL_COM)
 
         if(platform.system() == 'Linux'):
             print('Make sure you run this as sudo.\n')
 
-        print('EXITING\n')
-        exit()
+        ser = None
 
-    print('Connected to Arduino on port', ser.name)
+    if(ser != None):
+        print('Connected to Arduino on port', ser.name)
 
     return ser
 
@@ -436,7 +436,6 @@ def InputPassword(msg, pswd, attempts=3):
         if(password == pswd):
             print('Password Confirmed!\n')
             return True
-            break
         else:
             print('Wrong Password, please try again.')
             at += 1
@@ -503,6 +502,9 @@ if(len(sys.argv) > 1 and sys.argv[1] == 'admin'):
         print('ERROR: Cannot enter Admin menu. Incorrect Password. QUITTING!')
         exit()
 
+if(ser == None):
+    print('ERROR: No serial connection established. Cannot continue. Quitting.')
+    exit()
 
 line = ''
 uid = ''
@@ -545,7 +547,7 @@ while(True):
 
         # Send the Open Door signal
         ser.write(b'OPEN')
-        time.sleep(5)
+        time.sleep(4)
         continue
 
     else:

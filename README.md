@@ -18,6 +18,8 @@ Software:
 
 * Arduino IDE 1.6+
 * Python 3.7+
+* firebase-admin python package
+* pyserial python package
 
 ### Arduino Circuit Connection
 The table below shows how to wire the RFIO-522 to the arduino pins:
@@ -82,6 +84,16 @@ For this step you will need to set up a Google account. Make sure you are logged
 Your Firebase Database setup is complete. For more information about Firestore Database, refer to the official manual here: https://firebase.google.com/docs/
 
 You may need to manually delete Collections or Documents from the Database during your testing phase.
+
+### Installing python packages
+
+Open a command console and type:
+```
+pip3 install firebase-admin
+pip3 install pyserial
+```
+
+You might need to run these commands as sudo on Linux.
 
 ## -Running the tests-
 ### Setting up config.txt

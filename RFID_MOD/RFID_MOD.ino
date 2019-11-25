@@ -107,16 +107,17 @@ void loop() {
   // Stop encryption on PCD
   rfid.PCD_StopCrypto1();
 
-  while(Serial.available() == 0) {}
-  String command = Serial.readString();
-  //Serial.println("I recieved: " + command);
-  //Serial.read(); // Remove any trailing character (NewLine, etc.)
-  
-  if(command == "OPEN"){
-    digitalWrite(RELAY_PIN, HIGH);
-    delay(5000);
-    digitalWrite(RELAY_PIN, LOW);
-  }
+  //Read Door Open signal
+//  while(Serial.available() == 0) {}
+//  String command = Serial.readString();
+//  //Serial.println("I recieved: " + command);
+//  //Serial.read(); // Remove any trailing character (NewLine, etc.)
+//  
+//  if(command == "OPEN"){
+//    digitalWrite(RELAY_PIN, HIGH);
+//    delay(4000);
+//    digitalWrite(RELAY_PIN, LOW);
+//  }
   
   // Halt the program until there is no card on the reader.
   while(rfid.PICC_IsNewCardPresent()){}
