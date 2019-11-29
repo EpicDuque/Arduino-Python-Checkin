@@ -371,7 +371,8 @@ def AddNewUser(uid):
         'lastname' : last,
         'uid' : uid,
         'snum' : student_num,
-        'pass' : password
+        'pass' : password,
+        'admin' : False,
     }
 
     firb.add_user(data)
