@@ -43,9 +43,13 @@ BLUE_CARD_UID = ''
 def NewUser(args):
     global ser
     
-    print('Present new user Card...\n')
-    uid = CaptureCard()
-    ser.write(b'OK')
+    if(ser != None):
+        print('Present new user Card...\n')
+        uid = CaptureCard()
+        ser.write(b'OK')
+    else:
+        print('Using 00000000 as UID since no Arduino board is present.')
+        uid = '00000000'
 
     AddNewUser(uid)
 
@@ -450,6 +454,10 @@ def CaptureCard(serclose = False):
     global ser
     uid = ''
 
+    if (ser == None):
+        print('ERROR: Arduino serial communication not found.\n')
+        return None
+    
     # Inner Loop
     while(True):
         if(ser.isOpen() == False):
