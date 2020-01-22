@@ -433,6 +433,7 @@ def AdminSetup():
 def InputPassword(msg, pswd, attempts=3):
     at = 0
     while(at < attempts):
+        # getpass allows the user to input a password in the console without showing the characters.
         password = getpass.getpass(prompt=msg)
         m = hashlib.sha256()
         m.update(password.encode('utf-8'))
