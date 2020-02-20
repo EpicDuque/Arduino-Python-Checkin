@@ -26,6 +26,7 @@ import hashlib, getpass, sys, time
 VER = 'beta 1.0.0'
 BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
 BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
+DOOR = False # Are we going to implement door open mechanic?
 #-----------------------------------------------------------------------
 
 # Global Variables
@@ -556,8 +557,10 @@ while(True):
         print('-'*60)
 
         # Send the Open Door signal
-        ser.write(b'OPEN')
-        time.sleep(4)
+        if(DOOR):
+            ser.write(b'OPEN')
+            time.sleep(4)
+        
         continue
 
     else:
@@ -567,7 +570,9 @@ while(True):
         # Send an "Error" signal. SOMETHING needs to be sent to the Arduino.
         # Becasue the Arduino at this point is expecting data to read in the Serial.
         # If nothing is sent, the Arduino will get stucked in an infinite Loop.
-        ser.write(b'E')
+        if(DOOR):
+            ser.write(b'E')
+            
         continue
 
 ser.close()

@@ -39,6 +39,7 @@
 #define RST_PIN 9
 #define BUZZ_PIN 7
 #define RELAY_PIN 8
+#define DOOR false // Are we going to implement the door open timer?
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 
@@ -47,27 +48,30 @@ MFRC522::MIFARE_Key key;
 // Init array that will store new NUID
 byte nuidPICC[4];
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
-  SPI.begin(); // Init SPI bus
+  SPI.begin();     // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522
 
-  pinMode(BUZZ_PIN, OUTPUT); // Buzzer Pin
+  pinMode(BUZZ_PIN, OUTPUT);  // Buzzer Pin
   pinMode(RELAY_PIN, OUTPUT); // Buzzer Pin
 
-  for (byte i = 0; i < 6; i++) {
+  for (byte i = 0; i < 6; i++)
+  {
     key.keyByte[i] = 0xFF;
   }
 }
 
-void loop() {
+void loop()
+{
 
   // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
-  if ( ! rfid.PICC_IsNewCardPresent())
+  if (!rfid.PICC_IsNewCardPresent())
     return;
 
   // Verify if the NUID has been read
-  if ( ! rfid.PICC_ReadCardSerial())
+  if (!rfid.PICC_ReadCardSerial())
     return;
 
   Serial.print(F("PICC: "));
@@ -77,7 +81,8 @@ void loop() {
   // Check is the PICC of Classic MIFARE type
   if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
       piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
-      piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
+      piccType != MFRC522::PICC_TYPE_MIFARE_4K)
+  {
     Serial.println(F("ERR:Your tag is not of type MIFARE Classic.:ERR"));
     return;
   }
@@ -89,7 +94,8 @@ void loop() {
   digitalWrite(BUZZ_PIN, LOW);
 
   // Store NUID into nuidPICC array
-  for (byte i = 0; i < 4; i++) {
+  for (byte i = 0; i < 4; i++)
+  {
     nuidPICC[i] = rfid.uid.uidByte[i];
   }
 
@@ -107,29 +113,33 @@ void loop() {
   // Stop encryption on PCD
   rfid.PCD_StopCrypto1();
 
-  //Read Door Open signal
-//  while(Serial.available() == 0) {}
-//  String command = Serial.readString();
-//  //Serial.println("I recieved: " + command);
-//  //Serial.read(); // Remove any trailing character (NewLine, etc.)
-//  
-//  if(command == "OPEN"){
-//    digitalWrite(RELAY_PIN, HIGH);
-//    delay(4000);
-//    digitalWrite(RELAY_PIN, LOW);
-//  }
-  
+  if (DOOR)
+  {
+    //Read Door Open signal
+    while (Serial.available() == 0){}
+    String command = Serial.readString();
+    //Serial.println("I recieved: " + command);
+    //Serial.read(); // Remove any trailing character (NewLine, etc.)
+
+    if (command == "OPEN")
+    {
+      digitalWrite(RELAY_PIN, HIGH);
+      delay(4000);
+      digitalWrite(RELAY_PIN, LOW);
+    }
+  }
   // Halt the program until there is no card on the reader.
-  while(rfid.PICC_IsNewCardPresent()){}
+  while (rfid.PICC_IsNewCardPresent()){}
   delay(700);
 }
-
 
 /**
    Helper routine to dump a byte array as hex values to Serial.
 */
-void printHex(byte *buffer, byte bufferSize) {
-  for (byte i = 0; i < bufferSize; i++) {
+void printHex(byte *buffer, byte bufferSize)
+{
+  for (byte i = 0; i < bufferSize; i++)
+  {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
     Serial.print(buffer[i], HEX);
   }
@@ -138,8 +148,10 @@ void printHex(byte *buffer, byte bufferSize) {
 /**
    Helper routine to dump a byte array as dec values to Serial.
 */
-void printDec(byte *buffer, byte bufferSize) {
-  for (byte i = 0; i < bufferSize; i++) {
+void printDec(byte *buffer, byte bufferSize)
+{
+  for (byte i = 0; i < bufferSize; i++)
+  {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
     Serial.print(buffer[i], DEC);
   }
