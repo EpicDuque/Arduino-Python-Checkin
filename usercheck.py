@@ -6,6 +6,7 @@
 # ----------------------------------------------------------------------
 # PLEASE remember to write something to the Serial after a CaptureCard command.
 # Or else the Arduino will get stuck in an infinite loop.
+# This only applies if the DOOR flag is True.
 # ----------------------------------------------------------------------
 # TODO:
 # * Arduino waits for Serial information in an infinite loop after reading a card.
@@ -14,6 +15,7 @@
 #
 # * Implement the Sheets.py code so that it works with this system.
 # * Make the code Prettier.
+# * Implement a second CardReader.
 # ----------------------------------------------------------------------
 
 import serial, re, platform
@@ -23,11 +25,10 @@ import hashlib, getpass, sys, time
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'beta 0.1.0'
+VER = 'alpha 0.1.0'
 BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
 BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
 DOOR = False # Are we going to implement door open mechanic?
-#-----------------------------------------------------------------------
 
 # Global Variables
 SERIAL_COM = ''
@@ -158,6 +159,7 @@ def DeleteUser(args):
         print('Example: delete -uid 1234ABCD,5678BFDC')
 
 def WipeData(args):
+    print('NOTE: This command is not yet implemented.\n')
     pass
 
 COMMANDS = {
@@ -171,7 +173,7 @@ COMMANDS = {
     'wipe'      : WipeData,
 }
 
-# --------------------------------------------
+# --------------------------------------------------------------------------------
 def DisplayBanner():
     print(BANNER_TITLE)
     print(BANNER_MESSAGE)

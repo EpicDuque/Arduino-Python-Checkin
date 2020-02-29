@@ -55,7 +55,7 @@ void setup()
   rfid.PCD_Init(); // Init MFRC522
 
   pinMode(BUZZ_PIN, OUTPUT);  // Buzzer Pin
-  pinMode(RELAY_PIN, OUTPUT); // Buzzer Pin
+  pinMode(RELAY_PIN, OUTPUT); // Relay Pin
 
   for (byte i = 0; i < 6; i++)
   {
