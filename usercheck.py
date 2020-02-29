@@ -23,7 +23,7 @@ import hashlib, getpass, sys, time
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'beta 1.0.0'
+VER = 'beta 0.1.0'
 BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
 BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
 DOOR = False # Are we going to implement door open mechanic?
