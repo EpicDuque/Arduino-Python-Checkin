@@ -2,3 +2,4 @@ adminsdk.json
 sheets.py
 .vscode/
 __pycache__/
+config.txt
