@@ -1,4 +1,4 @@
-port=COM10
+port=COM8
 baud=9600
 timeout=10
 bluecard=BB42703B

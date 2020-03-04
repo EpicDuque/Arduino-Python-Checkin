@@ -7,6 +7,8 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from datetime import datetime
 
+import colorama
+from colorama import Fore, Style
 # Create a callback on_snapshot function to capture changes
 # def on_snapshot(doc_snapshot, changes, read_time):
 #     for doc in doc_snapshot:
@@ -40,9 +42,9 @@ def add_check(uid, time):
     schema_check['uid'] = uid
 
     if(schema_check['in'] == True):
-        print('Checked IN')
+        print(Fore.GREEN + 'Checked IN' + Fore.WHITE)
     else:
-        print('Checked OUT')
+        print(Fore.RED + 'Checked OUT' + Fore.WHITE)
 
     CHECKS_REF.add(schema_check)
 

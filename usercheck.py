@@ -21,7 +21,10 @@
 import serial, re, platform
 import firb
 from datetime import datetime
-import hashlib, getpass, sys, time
+import hashlib, getpass, sys, time, os
+
+import colorama
+from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE EDIT THIS |
 #-----------------------------------------------------------------------
@@ -38,7 +41,7 @@ USER = {}
 USER_PW = False
 ADMIN = {}
 BLUE_CARD_UID = ''
-
+IN_USERS = []
 #----------------------------------------------------------------------
 # Admin Related 
 #----------------------------------------------------------------------
@@ -115,6 +118,21 @@ def ListChecks(args):
 
     print('\nDONE')
 
+def ListChecksIn(args=''):
+    global IN_USERS
+
+    print('Listing ALL checked IN users...')
+    print('-'*30)
+    users = firb.get_all_users()
+    for user in users:
+        u = user.to_dict()
+        docs = firb.find_checks(u['uid'], 1)
+
+        for doc in docs:
+            d = doc.to_dict()
+            if(d['in'] == True):
+                print('{:<15} {:<15} {:<15}'.format(u['name'], u['lastname'], u['snum']))
+        
 def DisplayHelp(args):
     global COMMANDS
     print('\nCommands Available:\n')
@@ -160,12 +178,12 @@ def DeleteUser(args):
 
 def WipeData(args):
     print('NOTE: This command is not yet implemented.\n')
-    pass
 
 COMMANDS = {
     'new'       : NewUser,
     'users'     : ListUsers,
     'checks'    : ListChecks,
+    'checksin'  : ListChecksIn,
     'help'      : DisplayHelp,
     'quit'      : ExitAdmin,
     'exit'      : ExitAdmin,
@@ -524,7 +542,9 @@ uid = ''
 
 print()
 
+# MAIN LOOP ROUTINE
 while(True):
+    #ListChecksIn()
     print('\nPlease present your card...\n')
 
     uid = CaptureCard()
@@ -557,13 +577,10 @@ while(True):
         CheckUser(USER)
         print('.'*60)
         print('-'*60)
-
         # Send the Open Door signal
         if(DOOR):
             ser.write(b'OPEN')
             time.sleep(4)
-        
-        continue
 
     else:
         # AddUnknownUser(uid)
@@ -574,8 +591,10 @@ while(True):
         # If nothing is sent, the Arduino will get stucked in an infinite Loop.
         if(DOOR):
             ser.write(b'E')
-            
-        continue
+
+    # time.sleep(2)
+    # os.system('clear')
+    # os.system('cls')
 
 ser.close()
 
