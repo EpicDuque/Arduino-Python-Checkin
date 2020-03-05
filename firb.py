@@ -77,7 +77,10 @@ def get_all_users():
 
 def find_checks(uid, num, last=False):
     docs = CHECKS_REF.where('uid', '==', uid).limit(num).order_by('time', direction='DESCENDING').stream()
+    return docs
 
+def find_checks_date(datefrom, dateto, lim):
+    docs = CHECKS_REF.where('time', '>=', datefrom).where('time', '<=', dateto).order_by('time', direction='DESCENDING').limit(lim).stream()
     return docs
 
 def get_admin():

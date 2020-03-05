@@ -28,7 +28,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.0'
+VER = 'alpha 0.1.2'
 BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
 BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
 DOOR = False # Are we going to implement door open mechanic?
@@ -179,16 +179,85 @@ def DeleteUser(args):
 def WipeData(args):
     print('NOTE: This command is not yet implemented.\n')
 
+def Report(args):
+    os.system('clear')
+    os.system('cls')
+
+    datefrom = datetime.today()
+    dateto = datetime.today()
+    lim = 30 # Limit number of checks reported
+
+    def convertdate():
+        pass
+    
+    if(len(args) > 2):
+        if '-date' in args:
+            ind = args.index('-date')
+
+            datefrom = args[ind+1].split('/')
+            if(len(datefrom) != 3):
+                print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
+                return
+            datefrom = datetime(int(datefrom[0]), int(datefrom[1]), int(datefrom[2]))
+
+            dateto = args[ind+2].split('/')
+            if(len(dateto) != 3):
+                print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
+                return
+            dateto = datetime(int(dateto[0]), int(dateto[1]), int(dateto[2]), hour=23, minute=59, second=59)
+            
+        else:
+            print(Fore.RED + 'ERROR: A date range is required.' + Fore.WHITE)
+            return
+
+        if '-lim' in args:
+            ind = args.index('-lim')
+            lim = int(args[ind+1])
+
+            if(lim < 0):
+                print(Fore.RED + 'ERROR: An error occured in -lim argument. Must be a positive number.' + Fore.WHITE)
+                return
+        
+        # Begin Printing Assistance
+        print('-'*100)
+        print(f'::Assistance Report:: Generated {Date12(datetime.today())}\n')
+        print(f'Date From: {datefrom}')
+        print(f'Date To: {dateto}')
+        print('-'*35)
+        docs = firb.find_checks_date(datefrom, dateto, lim)
+        for d in docs:
+            doc = d.to_dict()
+            u = firb.find_user('uid', doc['uid'])
+
+            if(u != {}):
+                c = 'Unknown'
+                if(doc['in']):
+                    c = Fore.GREEN + 'IN' + Fore.WHITE
+                else:
+                    c = Fore.RED + 'OUT' + Fore.WHITE
+                
+                print('{:<16} {:<16} {:<15} {:<20} {:<12}'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), c))
+
+        print('-'*100)
+        # Finish Assistance Report
+
+    else:
+        print('DESCRIPTION: Generates a checks report specified by criteria.\n')
+        print('USAGE: report [-criteria args] [-criteria args] etc.')
+        print('Dates Format: YYYY/MM/DD | months and days can be single digits.\n')
+        print('EXAMPLE: report -date 2020/3/3 2020/3/4 -lim 10')
+
 COMMANDS = {
     'new'       : NewUser,
     'users'     : ListUsers,
     'checks'    : ListChecks,
     'checksin'  : ListChecksIn,
-    'help'      : DisplayHelp,
+    'report'    : Report,
     'quit'      : ExitAdmin,
-    'exit'      : ExitAdmin,
     'delete'    : DeleteUser,
     'wipe'      : WipeData,
+    'help'      : DisplayHelp,
+    'exit'      : ExitAdmin,
 }
 
 # --------------------------------------------------------------------------------
@@ -512,11 +581,12 @@ def CaptureCard(serclose = False):
 #-----------------------------------------------------------------------------
 # MAIN BEGIN
 #-----------------------------------------------------------------------------
+print('-'*60)
 DisplayBanner()
 
 ReadConfig('config.txt')
 
-print('-'*30)
+print('-'*60)
 
 ser = ConnectArduino()
 
