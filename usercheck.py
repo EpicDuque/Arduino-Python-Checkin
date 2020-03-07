@@ -28,7 +28,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.2'
+VER = 'alpha 0.1.3'
 BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
 BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
 DOOR = False # Are we going to implement door open mechanic?
@@ -243,8 +243,10 @@ def Report(args):
 
     else:
         print('DESCRIPTION: Generates a checks report specified by criteria.\n')
-        print('USAGE: report [-criteria args] [-criteria args] etc.')
+        print('USAGE: report -date YYYY/MM/DD YYYY/MM/DD -lim [days]')
+        print('Dates Format: YYYY/MM/DD | months and days can be single digits.')
         print('Dates Format: YYYY/MM/DD | months and days can be single digits.\n')
+        print('EXAMPLE: report -date 2020/1/1 2020/1/7')
         print('EXAMPLE: report -date 2020/3/3 2020/3/4 -lim 10')
 
 COMMANDS = {
