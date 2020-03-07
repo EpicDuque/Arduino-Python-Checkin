@@ -180,8 +180,11 @@ def WipeData(args):
     print('NOTE: This command is not yet implemented.\n')
 
 def Report(args):
-    os.system('clear')
-    os.system('cls')
+
+    #Helper function to both write to a file and print to the screen at the same time.
+    def dump(f, s):
+        f.write(s + '\n')
+        print(s)
 
     datefrom = datetime.today()
     dateto = datetime.today()
@@ -219,11 +222,15 @@ def Report(args):
                 return
         
         # Begin Printing Assistance
-        print('-'*100)
-        print(f'::Assistance Report:: Generated {Date12(datetime.today())}\n')
-        print(f'Date From: {datefrom}')
-        print(f'Date To: {dateto}')
-        print('-'*35)
+        os.system('clear')
+        os.system('cls')
+
+        f = open('Report_.txt', 'w')
+        dump(f,'-'*100)
+        dump(f,f'::Assistance Report:: Generated {Date12(datetime.today())}\n')
+        dump(f,f'Date From: {Date12(datefrom)}')
+        dump(f,f'Date To: {Date12(dateto)}')
+        dump(f,'-'*35)
         docs = firb.find_checks_date(datefrom, dateto, lim)
         for d in docs:
             doc = d.to_dict()
@@ -231,14 +238,21 @@ def Report(args):
 
             if(u != {}):
                 c = 'Unknown'
+                cd = 'Unknown'
                 if(doc['in']):
                     c = Fore.GREEN + 'IN' + Fore.WHITE
+                    cd = 'IN'
                 else:
                     c = Fore.RED + 'OUT' + Fore.WHITE
+                    cd = 'OUT'
                 
+                # Can't use helper function 'dump' here because we cant color text to a regular text file.
                 print('{:<16} {:<16} {:<15} {:<20} {:<12}'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), c))
+                f.write('{:<16} {:<16} {:<15} {:<20} {:<12}\n'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), cd))
 
-        print('-'*100)
+        dump(f,'-'*100)
+        print(f'Assistance report saved to: {f.name}')
+        f.close()
         # Finish Assistance Report
 
     else:
