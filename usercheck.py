@@ -70,13 +70,14 @@ def ListUsers(args):
     print()
 
 def ListChecks(args):
-    if(len(args) > 2):
+    if len(args) > 2:
         users = args[2].split(',')
         field = args[1][1:]
 
-        if(args[3] == '-q'):
+        if '-q' in args:
+            ind = args.index('-q')
             try:
-                qty = int(args[4])
+                qty = int(args[ind+1])
             except:
                 print('\nERROR: Invalid argument for -q (Expected a positive Integer).\n')
                 return
