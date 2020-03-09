@@ -26,14 +26,13 @@ import hashlib, getpass, sys, time, os
 import colorama
 from colorama import Fore, Style
 #-----------------------------------------------------------------------
-# GLOBAL CONFIG, PLEASE EDIT THIS |
+# GLOBAL CONFIG, PLEASE DO NOT EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.3'
-BANNER_TITLE = 'CORE LAB Check In Service - Ver: ' + VER
-BANNER_MESSAGE = '@ Universidad Interamericana de Bayamón - School of Engineering\n'
+VER = 'alpha 0.1.4'
+BANNER_TITLE = ''
+BANNER_MESSAGE = ''
 DOOR = False # Are we going to implement door open mechanic?
 
-# Global Variables
 SERIAL_COM = ''
 BAUD = ''
 TOUT = 0
@@ -51,7 +50,9 @@ def NewUser(args):
     if(ser != None):
         print('Present new user Card...\n')
         uid = CaptureCard()
-        ser.write(b'OK')
+
+        if(DOOR):
+            ser.write(b'OK')
     else:
         print('Using 00000000 as UID since no Arduino board is present.')
         uid = '00000000'
@@ -278,17 +279,24 @@ COMMANDS = {
 
 # --------------------------------------------------------------------------------
 def DisplayBanner():
+    print('\nCheckin Service VER: ' + VER)
+    print()
+    print('-'*80)
     print(BANNER_TITLE)
     print(BANNER_MESSAGE)
+    print('-'*80)
 
-    print('Initializing...')
+    print('\nInitializing...')
     print('Operating System: ' + platform.system())
+    print('-'*80)
 
 def ReadConfig(file):
     global SERIAL_COM
     global BAUD
     global TOUT
     global BLUE_CARD_UID
+    global BANNER_MESSAGE
+    global BANNER_TITLE
 
     # Read all contents from config.txt ------------
     print('\nReading config.txt file...')
@@ -327,6 +335,16 @@ def ReadConfig(file):
     match = re.search(pat, contents)
     BLUE_CARD_UID = match.group(1)
     print('BLUE KEY UID:', BLUE_CARD_UID)
+
+    # Read Banner Title
+    pat = 'title="(.+)"'
+    match = re.search(pat, contents)
+    BANNER_TITLE = match.group(1)
+
+    # Read Banner Message
+    pat = 'message="(.+)"'
+    match = re.search(pat, contents)
+    BANNER_MESSAGE = match.group(1)
 
     print ('\nDONE')
 
@@ -597,12 +615,12 @@ def CaptureCard(serclose = False):
 #-----------------------------------------------------------------------------
 # MAIN BEGIN
 #-----------------------------------------------------------------------------
-print('-'*60)
-DisplayBanner()
-
 ReadConfig('config.txt')
 
-print('-'*60)
+time.sleep(1)
+os.system('clear')
+os.system('cls')
+DisplayBanner()
 
 ser = ConnectArduino()
 
