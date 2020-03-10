@@ -28,7 +28,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE DO NOT EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.4'
+VER = 'alpha 0.1.5'
 BANNER_TITLE = ''
 BANNER_MESSAGE = ''
 DOOR = False # Are we going to implement door open mechanic?
@@ -430,7 +430,7 @@ def MainMenu(user):
 
         print()
 
-        sel = ValidateInput_Int(msg='Menu #: ', valid_range=range(0,2))
+        sel = ValidateInput_Int(msg='Menu #: ', valid_range=range(0,3))
         if(sel == 0):
             break
         
@@ -457,7 +457,7 @@ def MenuChecksByDate():
     date = input('Please enter starting date (MM/DD/YYYY): ')
     date = ValidateDate(date)
     if date == None:
-        print(Fore.RED + 'ERROR: Invalid date format. Format: (MM/DD/YYYY).')
+        print(Fore.RED + 'ERROR: Invalid date format. Format: (MM/DD/YYYY).' + Fore.WHITE)
         return
     
     datefrom = ParseDate(date)
@@ -473,7 +473,7 @@ def MenuChecksByDate():
     dateto = ParseDate(date)
     #-----------------------------------
 
-    lim = ValidateInput_Int('Please enter number of checks to review (Max 100): ', valid_range=[1,101])
+    lim = ValidateInput_Int('Please enter number of checks to review (Max 100): ', valid_range=range(1, 101))
     docs = firb.find_checks_date(datefrom, dateto, lim)
 
     print('-' * 80)
