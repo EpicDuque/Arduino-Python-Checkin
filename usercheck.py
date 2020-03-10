@@ -725,6 +725,13 @@ uid = ''
 
 print()
 
+# Flushes the serial connection before main program begins.
+while True:
+    line = ser.readline()
+    msg = str(line,'ascii')
+    if msg == '':
+        break
+
 # MAIN LOOP ROUTINE
 while(True):
     #ListChecksIn()
