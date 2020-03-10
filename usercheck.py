@@ -187,12 +187,10 @@ def Report(args):
     def dump(f, s):
         f.write(s + '\n')
         print(s)
-    
-    datefrom = datetime.today()
-    dateto = datetime.today()
+
     lim = 60 # Limit number of checks reported
     
-    if(len(args) > 2):
+    if(len(args) >= 2):
         if '-date' in args:
             ind = args.index('-date')
 
@@ -202,7 +200,8 @@ def Report(args):
                 print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
                 return
             
-            datefrom = datetime(int(date[2]), int(date[0]), int(date[1]))
+            # datefrom = datetime(int(date[2]), int(date[0]), int(date[1]))
+            datefrom = ParseDate(date)
 
             #Date To
             date = ValidateDate(args[ind+2])
@@ -210,10 +209,19 @@ def Report(args):
                 print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
                 return
 
-            dateto = datetime(int(date[2]), int(date[0]), int(date[1]), hour=23, minute=59, second=59)
+            # dateto = datetime(int(date[2]), int(date[0]), int(date[1]), hour=23, minute=59, second=59)
+            dateto = ParseDate(date, end=True)
             
+        elif '-today' in args:
+                date = datetime.today()
+                datefrom = ParseDate([date.month, date.day, date.year])
+
+                date = datetime.today()
+                dateto = ParseDate([date.month, date.day, date.year], end=True)
+                lim = 100
+
         else:
-            print(Fore.RED + 'ERROR: A date range is required (For Now).' + Fore.WHITE)
+            print(Fore.RED + 'ERROR: A date range is required (For Now). Use -date or -today argument.' + Fore.WHITE)
             return
 
         if '-lim' in args:
@@ -261,12 +269,18 @@ def Report(args):
         # Finish Assistance Report
 
     else:
-        print('DESCRIPTION: Generates a checks report specified by criteria.\n')
-        print('USAGE: report -date YYYY/MM/DD YYYY/MM/DD -lim [days]')
-        print('Dates Format: YYYY/MM/DD | months and days can be single digits.')
-        print('Dates Format: YYYY/MM/DD | months and days can be single digits.\n')
+        print('DESCRIPTION: Generates a checks report specified by criteria.')
+        print('USAGE: report -date [Date From] [Date To] -lim [days]')
+        print()
+
+        print('Dates Format: MM/DD/YYYY | months and days can be single digits.')
+        print('If no -lim argument is specified, it will default to 60.')
+        print()
+
         print('EXAMPLE: report -date 2020/1/1 2020/1/7')
         print('EXAMPLE: report -date 2020/3/3 2020/3/4 -lim 10')
+        print('EXAMPLE: report -today -lim 15')
+        print()
 
 COMMANDS = {
     'new'       : NewUser,
@@ -490,6 +504,8 @@ def ValidateDate(arg):
     return date
 
 def ParseDate(date, end=False):
+    #Date argument must be [MM/DD/YYYY]
+    print(f'About to parse date: {date}\n')
     if end:
         parsed = datetime(int(date[2]), int(date[0]), int(date[1]), hour=23, minute=59, second=59)
     else:
