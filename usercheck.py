@@ -17,7 +17,6 @@
 # * Make the code Prettier.
 # * Implement a second CardReader.
 # ----------------------------------------------------------------------
-
 import serial, re, platform
 import firb
 from datetime import datetime
@@ -28,7 +27,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE DO NOT EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.6'
+VER = 'alpha 0.1.7'
 BANNER_TITLE = ''
 BANNER_MESSAGE = ''
 DOOR = False # Are we going to implement door open mechanic?
