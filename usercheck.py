@@ -28,7 +28,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE DO NOT EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.5'
+VER = 'alpha 0.1.6'
 BANNER_TITLE = ''
 BANNER_MESSAGE = ''
 DOOR = False # Are we going to implement door open mechanic?
@@ -448,7 +448,7 @@ def MenuLatestChecks():
         if(d['in'] == True):
             c = Fore.GREEN + 'IN' + Fore.WHITE
         else:
-            c = Fore.RED + 'OUT' + Fore.RED
+            c = Fore.RED + 'OUT' + Fore.WHITE
         
         print(Date12(d['time']), c)
 
@@ -474,7 +474,7 @@ def MenuChecksByDate():
     #-----------------------------------
 
     lim = ValidateInput_Int('Please enter number of checks to review (Max 100): ', valid_range=range(1, 101))
-    docs = firb.find_checks_date(datefrom, dateto, lim)
+    docs = firb.find_checks_date(datefrom, dateto, lim, uid=USER['uid'])
 
     print('-' * 80)
     for d in docs:
