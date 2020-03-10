@@ -187,39 +187,40 @@ def Report(args):
     def dump(f, s):
         f.write(s + '\n')
         print(s)
-
+    
     datefrom = datetime.today()
     dateto = datetime.today()
-    lim = 30 # Limit number of checks reported
-
-    def convertdate():
-        pass
+    lim = 60 # Limit number of checks reported
     
     if(len(args) > 2):
         if '-date' in args:
             ind = args.index('-date')
 
-            datefrom = args[ind+1].split('/')
-            if(len(datefrom) != 3):
+            #Date From
+            date = ValidateDate(args[ind+1])
+            if date == None:
                 print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
                 return
-            datefrom = datetime(int(datefrom[0]), int(datefrom[1]), int(datefrom[2]))
+            
+            datefrom = datetime(int(date[2]), int(date[0]), int(date[1]))
 
-            dateto = args[ind+2].split('/')
-            if(len(dateto) != 3):
+            #Date To
+            date = ValidateDate(args[ind+2])
+            if date == None:
                 print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
                 return
-            dateto = datetime(int(dateto[0]), int(dateto[1]), int(dateto[2]), hour=23, minute=59, second=59)
+
+            dateto = datetime(int(date[2]), int(date[0]), int(date[1]), hour=23, minute=59, second=59)
             
         else:
-            print(Fore.RED + 'ERROR: A date range is required.' + Fore.WHITE)
+            print(Fore.RED + 'ERROR: A date range is required (For Now).' + Fore.WHITE)
             return
 
         if '-lim' in args:
             ind = args.index('-lim')
             lim = int(args[ind+1])
 
-            if(lim < 0):
+            if(lim <= 0):
                 print(Fore.RED + 'ERROR: An error occured in -lim argument. Must be a positive number.' + Fore.WHITE)
                 return
         
@@ -233,7 +234,9 @@ def Report(args):
         dump(f,f'Date From: {Date12(datefrom)}')
         dump(f,f'Date To: {Date12(dateto)}')
         dump(f,'-'*35)
+
         docs = firb.find_checks_date(datefrom, dateto, lim)
+
         for d in docs:
             doc = d.to_dict()
             u = firb.find_user('uid', doc['uid'])
@@ -249,8 +252,8 @@ def Report(args):
                     cd = 'OUT'
                 
                 # Can't use helper function 'dump' here because we cant color text to a regular text file.
-                print('{:<16} {:<16} {:<15} {:<20} {:<12}'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), c))
-                f.write('{:<16} {:<16} {:<15} {:<20} {:<12}\n'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), cd))
+                print('{:<16} {:<16} {:<15} {:<24} {:<12}'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), c))
+                f.write('{:<16} {:<16} {:<15} {:<24} {:<12}\n'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), cd))
 
         dump(f,'-'*100)
         print(f'Assistance report saved to: {f.name}')
@@ -401,15 +404,15 @@ def MainMenu(user):
     #     return
 
     menu_switch = {
-        1 : Menu_FindChecks,
+        1 : MenuLatestChecks,
+        2 : MenuChecksByDate,
     }
 
     while(True):
         print('Please Enter an Option:\n')
-        print('1: Verify Assistance')
-        print('2: Change UID')
-
         print('0: Exit')
+        print('1: Verify Latest Checks')
+        print('2: Verify Assistance by date range.')
 
         print()
 
@@ -419,21 +422,80 @@ def MainMenu(user):
         
         menu_switch[sel]()   
             
-def Menu_FindChecks():
+def MenuLatestChecks():
     print()
-    num = ValidateInput_Int(msg='How many Checks to review? (1 - 20): ', valid_range=range(1,21))
-
+    num = ValidateInput_Int(msg='How many Checks to review? (1 - 30): ', valid_range=range(1,31))
     docs = firb.find_checks(USER['uid'], num)
+
     print('\nDisplaying last {} Checks:'.format(num))
     print()
     for doc in docs:
         d = doc.to_dict()
         if(d['in'] == True):
-            c = 'CHECK IN'
+            c = Fore.GREEN + 'IN' + Fore.WHITE
         else:
-            c = 'CHECK OUT'
+            c = Fore.RED + 'OUT' + Fore.RED
         
         print(Date12(d['time']), c)
+
+def MenuChecksByDate():
+    # Get Starting date
+    date = input('Please enter starting date (MM/DD/YYYY): ')
+    date = ValidateDate(date)
+    if date == None:
+        print(Fore.RED + 'ERROR: Invalid date format. Format: (MM/DD/YYYY).')
+        return
+    
+    datefrom = ParseDate(date)
+    #-----------------------------------
+
+    # Get Ending date
+    date = input('Please enter ending date (MM/DD/YYYY): ')
+    date = ValidateDate(date)
+    if date == None:
+        print(Fore.RED + 'ERROR: Invalid date format. Format: (MM/DD/YYYY).')
+        return
+    
+    dateto = ParseDate(date)
+    #-----------------------------------
+
+    lim = ValidateInput_Int('Please enter number of checks to review (Max 100): ', valid_range=[1,101])
+    docs = firb.find_checks_date(datefrom, dateto, lim)
+
+    print('-' * 80)
+    for d in docs:
+        doc = d.to_dict()
+        u = firb.find_user('uid', doc['uid'])
+
+        if(u != {}):
+            c = 'Unknown'
+            cd = 'Unknown'
+            if(doc['in']):
+                c = Fore.GREEN + 'IN' + Fore.WHITE
+                cd = 'IN'
+            else:
+                c = Fore.RED + 'OUT' + Fore.WHITE
+                cd = 'OUT'
+            
+            # Can't use helper function 'dump' here because we cant color text to a regular text file.
+            print('{:<16} {:<16} {:<15} {:<24} {:<12}'.format(u['name'], u['lastname'], u['snum'], Date12(doc['time']), c))
+    
+    print('-' * 80)
+
+def ValidateDate(arg):
+    date = arg.split('/')
+    if len(date) != 3:
+        return None
+
+    return date
+
+def ParseDate(date, end=False):
+    if end:
+        parsed = datetime(int(date[2]), int(date[0]), int(date[1]), hour=23, minute=59, second=59)
+    else:
+        parsed = datetime(int(date[2]), int(date[0]), int(date[1]), hour=0, minute=0, second=0)
+
+    return parsed
 
 def ValidateInput_Int(msg = '', valid_range = [0]):
     done = False
@@ -453,6 +515,7 @@ def ValidateInput_Int(msg = '', valid_range = [0]):
     
 # End Main menu functions -----------------
 
+# Main Functions
 def FetchUser(uid):
     user = {}
     print('\nFetching user on Database...')
