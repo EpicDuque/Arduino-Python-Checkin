@@ -27,7 +27,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE DO NOT EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.7'
+VER = 'alpha 0.1.8'
 BANNER_TITLE = ''
 BANNER_MESSAGE = ''
 DOOR = False # Are we going to implement door open mechanic?
@@ -315,6 +315,7 @@ def ReadConfig(file):
     global BLUE_CARD_UID
     global BANNER_MESSAGE
     global BANNER_TITLE
+    global DOOR
 
     # Read all contents from config.txt ------------
     print('\nReading config.txt file...')
@@ -363,6 +364,19 @@ def ReadConfig(file):
     pat = 'message="(.+)"'
     match = re.search(pat, contents)
     BANNER_MESSAGE = match.group(1)
+
+    # Read Door
+    pat = 'door=(\d)'
+    match = re.search(pat, contents)
+    d = int(match.group(1))
+    if type(d) is int:
+        if d == 0:
+            d = False
+        elif d == 1:
+            d = True
+        
+        DOOR = d
+        print('DOOR: ' + str(d))
 
     print ('\nDONE')
 
