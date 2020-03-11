@@ -40,6 +40,7 @@ USER_PW = False
 ADMIN = {}
 BLUE_CARD_UID = ''
 IN_USERS = []
+ser = None
 #----------------------------------------------------------------------
 # Admin Related 
 #----------------------------------------------------------------------
@@ -691,6 +692,7 @@ def CaptureCard(serclose = False):
     
     return uid
 
+            
 #-----------------------------------------------------------------------------
 # MAIN BEGIN
 #-----------------------------------------------------------------------------
@@ -731,7 +733,7 @@ print()
 #     msg = str(line,'ascii')
 #     if msg == '':
 #         break
-
+ser.reset_input_buffer()
 # MAIN LOOP ROUTINE
 while(True):
     #ListChecksIn()
