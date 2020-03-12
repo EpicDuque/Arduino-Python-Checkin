@@ -27,7 +27,7 @@ from colorama import Fore, Style
 #-----------------------------------------------------------------------
 # GLOBAL CONFIG, PLEASE DO NOT EDIT THIS |
 #-----------------------------------------------------------------------
-VER = 'alpha 0.1.8'
+VER = 'alpha 0.1.9'
 BANNER_TITLE = ''
 BANNER_MESSAGE = ''
 DOOR = False # Are we going to implement door open mechanic?
@@ -282,17 +282,28 @@ def Report(args):
         print('EXAMPLE: report -today -lim 15')
         print()
 
+def PrintUID(args):
+    global ser
+
+    if ser != None:
+        print('Please present a card...')
+        uid = CaptureCard()
+        print(f'\nCaptured UID: {uid}\n')
+    else:
+        PrintError('Serial communication is unavailable.')
+
 COMMANDS = {
     'new'       : NewUser,
     'users'     : ListUsers,
+    'uid'       : PrintUID,
     'checks'    : ListChecks,
     'checksin'  : ListChecksIn,
     'report'    : Report,
-    'quit'      : ExitAdmin,
     'delete'    : DeleteUser,
     'wipe'      : WipeData,
     'help'      : DisplayHelp,
     'exit'      : ExitAdmin,
+    'quit'      : ExitAdmin,
 }
 
 # --------------------------------------------------------------------------------
