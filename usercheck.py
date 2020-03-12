@@ -79,7 +79,7 @@ def ListChecks(args):
             try:
                 qty = int(args[ind+1])
             except:
-                print('\nERROR: Invalid argument for -q (Expected a positive Integer).\n')
+                PrintError('Invalid argument for -q (Expected a positive Integer).\n')
                 return
         else:
             print('No argument "-q" specified, using default -q 6')
@@ -197,7 +197,7 @@ def Report(args):
             #Date From
             date = ValidateDate(args[ind+1])
             if date == None:
-                print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
+                PrintError('Invalid Date. Corret format is: MM/DD/YYYY')
                 return
             
             # datefrom = datetime(int(date[2]), int(date[0]), int(date[1]))
@@ -206,7 +206,7 @@ def Report(args):
             #Date To
             date = ValidateDate(args[ind+2])
             if date == None:
-                print(Fore.RED + 'ERROR: Invalid Date. Corret format is: MM/DD/YYYY' + Fore.WHITE)
+                PrintError('Invalid Date. Corret format is: MM/DD/YYYY')
                 return
 
             # dateto = datetime(int(date[2]), int(date[0]), int(date[1]), hour=23, minute=59, second=59)
@@ -221,7 +221,7 @@ def Report(args):
                 lim = 100
 
         else:
-            print(Fore.RED + 'ERROR: A date range is required (For Now). Use -date or -today argument.' + Fore.WHITE)
+            PrintError('A date range is required (For Now). Use -date or -today argument.')
             return
 
         if '-lim' in args:
@@ -229,7 +229,7 @@ def Report(args):
             lim = int(args[ind+1])
 
             if(lim <= 0):
-                print(Fore.RED + 'ERROR: An error occured in -lim argument. Must be a positive number.' + Fore.WHITE)
+                PrintError('An error occured in -lim argument. Must be a positive number.')
                 return
         
         # Begin Printing Assistance
@@ -322,7 +322,7 @@ def ReadConfig(file):
     try:
         f = open(file, "r")
     except:
-        print("ERROR: An error ocurred while opening {} file.".format(file))
+        PrintError('An error ocurred while opening {} file.'.format(file))
         print('EXITING')
         exit()
 
@@ -405,7 +405,7 @@ def ConnectArduino():
     try:
         ser = serial.Serial(SERIAL_COM, BAUD)
     except:
-        print('\nERROR: Cannot open serial port:', SERIAL_COM)
+        PrintError(f'Cannot open serial port: {SERIAL_COM}')
 
         if(platform.system() == 'Linux'):
             print('Make sure you run this as sudo.\n')
@@ -418,6 +418,7 @@ def ConnectArduino():
     return ser
 
 # Main menu functions
+# ------------------------------------------
 def MainMenu(user):
     print('-'*60)
     print('NOTE: This feature is not fully implemented yet.\n')
@@ -543,9 +544,11 @@ def ValidateInput_Int(msg = '', valid_range = [0]):
     
     return num
     
-# End Main menu functions -----------------
+# End Main menu functions 
+# ------------------------------------------
 
 # Main Functions
+# ------------------------------------------
 def FetchUser(uid):
     user = {}
     print('\nFetching user on Database...')
@@ -645,7 +648,7 @@ def AdminSetup():
             ADMIN = data
             break
         except:
-            print('ERROR: There was an error adding the admin data to the database. QUITTING!')
+            PrintError('There was an error adding the admin data to the database. QUITTING!')
             exit()
 
 def InputPassword(msg, pswd, attempts=3):
@@ -674,7 +677,7 @@ def CaptureCard(serclose = False):
     uid = ''
 
     if (ser == None):
-        print('ERROR: Arduino serial communication not found.\n')
+        PrintError('Arduino serial communication not found.\n')
         return None
     
     # Inner Loop
@@ -706,7 +709,8 @@ def CaptureCard(serclose = False):
     
     return uid
 
-            
+def PrintError(msg):
+    print(Fore.RED + '\nERROR: ' + msg + Fore.WHITE)
 #-----------------------------------------------------------------------------
 # MAIN BEGIN
 #-----------------------------------------------------------------------------
@@ -729,11 +733,11 @@ if(len(sys.argv) > 1 and sys.argv[1] == 'admin'):
     if(InputPassword('Please enter Admin Password: ', ADMIN['pass'])):
         AdminMenu()
     else:
-        print('ERROR: Cannot enter Admin menu. Incorrect Password. QUITTING!')
+        PrintError('Cannot enter Admin menu. Incorrect Password. QUITTING!')
         exit()
 
 if(ser == None):
-    print('ERROR: No serial connection established. Cannot continue. Quitting.')
+    PrintError('No serial connection established. Cannot continue. Quitting.')
     exit()
 
 line = ''
@@ -772,7 +776,7 @@ while(True):
             MainMenu(USER)
             continue
         else:
-            print('ERROR: User not found. Cannot enter Menu.\n')
+            PrintError(' User not found. Cannot enter Menu.\n')
             continue
 
     USER = FetchUser(uid)
@@ -790,7 +794,7 @@ while(True):
 
     else:
         # AddUnknownUser(uid)
-        print('\nERROR: Unknown UID Detected.\n')
+        PrintError('\nUnknown UID Detected.\n')
 
         # Send an "Error" signal. SOMETHING needs to be sent to the Arduino.
         # Becasue the Arduino at this point is expecting data to read in the Serial.

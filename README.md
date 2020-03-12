@@ -91,6 +91,7 @@ Open a command console and type:
 ```
 pip3 install firebase-admin
 pip3 install pyserial
+pip3 install colorama
 ```
 
 You might need to run these commands as sudo on Linux.
@@ -108,6 +109,9 @@ port=COM5
 baud=9600
 timeout=10
 bluecard=BB42703B
+title="Your title goes here"
+message="Custom message goes here"
+door=0
 ```
 
 The Devices and Printers in Windows OS or the Arduino IDE will help you determine which COM port the Arduino is currently in.
@@ -137,11 +141,13 @@ The Devices and Printers in Windows OS or the Arduino IDE will help you determin
 </tbody>
 </table>
 
-*The "bluecard" refers to the special rfid tag that comes with some Arduino toolkits. It is usually blue and comes with a keychain. This can be any type of card with an UID, but in my case I used this blue tag as the "Config" card. More on that later.
+*The "bluecard" refers to the special rfid tag that comes with some Arduino toolkits. It is usually blue and comes with a keychain. This can be any type of card with an UID, but in my case I used this blue tag as the "Config" card.
+
+This feature is not fully implemented yet.
 
 ### Upload the Arduino sketch
 
-Open the RFID_MOD.ino sketch and upload it to the Arduino board.
+Open the RFID_MOD.ino sketch with Arduino IDE and upload it to the Arduino board.
 
 ### Run usercheck.py (as sudo in Linux)
 From the Console:
@@ -153,7 +159,7 @@ sudo python3 usercheck.py
 
 Windows (Power Shell):
 ```
-.\usercheck.py
+py usercheck.py
 ```
 
 ### Admin Console
@@ -166,7 +172,7 @@ sudo python3 usercheck.py admin
 
 Windows (Power Shell):
 ```
-.\usercheck.py admin
+py usercheck.py admin
 ```
 
 This will launch the admin console. You will need to make an admin password if running for the first time.
