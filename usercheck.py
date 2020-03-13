@@ -603,12 +603,12 @@ def AddNewUser(uid):
 
     # Data envelope schema
     data = {
-        'name' : name,
-        'lastname' : last,
-        'uid' : uid,
-        'snum' : student_num,
-        'pass' : password,
-        'admin' : False,
+        'name'      : name,
+        'lastname'  : last,
+        'uid'       : uid,
+        'snum'      : student_num,
+        'pass'      : password,
+        'admin'     : False,
     }
 
     firb.add_user(data)
