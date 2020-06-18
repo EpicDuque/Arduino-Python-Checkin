@@ -89,9 +89,9 @@ You may need to manually delete Collections or Documents from the Database durin
 
 Open a command console and type:
 ```
-pip3 install firebase-admin
-pip3 install pyserial
-pip3 install colorama
+py -m pip install firebase-admin
+py -m pip install pyserial
+py -m pip install colorama
 ```
 
 You might need to run these commands as sudo on Linux.
